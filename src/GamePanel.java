@@ -26,6 +26,8 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean running = false;
     Timer timer;
     Random random;
+    String fontTitle = "Freestyle Script";
+    boolean randomSnakeColor = true;
 
     // our constructor
     GamePanel() {
@@ -33,7 +35,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         // TODO later we can offer different options of the whole new game design with different
         //  colors
-        this.setBackground(new Color(152,214,220));
+        this.setBackground(new Color(206,238,238));
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         startGame();
@@ -48,36 +50,69 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        draw(g);
+        try {
+            draw(g);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public void draw(Graphics g) {
-        // drawing the grid on the field
-        g.setColor(new Color(62, 189, 219));
-        for(int i = 0; i < SCREEN_HEIGHT/UNIT_SIZE; i++) {
-            // drawing vertical lines
-            g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
-            // drawing horizontal lines
-            g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
-        }
-
-        // drawing the apple
-        g.setColor(new Color(232, 36, 39));
-        // TODO can change that later with object in the shape of an apple;
-        g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
-        
-        // drawing the snake
-        for (int i = 0; i < bodyParts; i++) {
-            // case when we are dealing with the head of the snake
-            if(i == 0) {
-                g.setColor(new Color(44, 100, 32));
-                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
-            } else {
-                g.setColor(new Color(123, 169, 96));
-                g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+    public void draw(Graphics g) throws InterruptedException {
+        if (running) {
+            // drawing the grid on the field
+            g.setColor(new Color(129, 218, 238));
+            for(int i = 0; i < SCREEN_HEIGHT/UNIT_SIZE; i++) {
+                // drawing vertical lines
+                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
+                // drawing horizontal lines
+                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
             }
-            
+
+            // drawing the apple
+            g.setColor(new Color(232, 36, 39));
+            // TODO can change that later with object in the shape of an apple;
+            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+
+            // drawing the snake - random color is off
+            if(!randomSnakeColor) {
+                for (int i = 0; i < bodyParts; i++) {
+                    // case when we are dealing with the head of the snake
+                    if(i == 0) {
+                        g.setColor(new Color(44, 100, 32));
+                        g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                    } else {
+                        g.setColor(new Color(123, 169, 96));
+                        g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                    }
+                }
+            }
+
+            // drawing the snake - random color is on
+            if(randomSnakeColor) {
+                for (int i = 0; i < bodyParts; i++) {
+                    // case when we are dealing with the head of the snake
+                    if(i == 0) {
+                        g.setColor(new Color(random.nextInt(255), random.nextInt(255),
+                                random.nextInt(255)));
+                        g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                    } else {
+                        g.setColor(new Color(random.nextInt(255), random.nextInt(255),
+                                random.nextInt(255)));
+                        g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                    }
+                }
+            }
+
+            // drawing the score
+            g.setColor(new Color(144, 86, 172));
+            g.setFont(new Font(fontTitle, Font.BOLD, 40));
+            FontMetrics metrics = getFontMetrics(g.getFont());
+            g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " +
+                            "" + applesEaten))/2, g.getFont().getSize());
+
+        } else {
+            gameOver(g);
         }
     }
 
@@ -150,7 +185,21 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    public void gameOver(Graphics g) {
+    public void gameOver(Graphics g) throws InterruptedException {
+        // Game Over test
+        Thread.sleep(600);
+        g.setColor(new Color(144, 86, 172));
+        g.setFont(new Font(fontTitle, Font.PLAIN, 100));
+        FontMetrics metrics1 = getFontMetrics(g.getFont());
+        g.drawString("Game Over", (SCREEN_WIDTH - metrics1.stringWidth("Game Over"))/2,
+                SCREEN_HEIGHT/2);
+
+        // displaying the score
+        g.setColor(new Color(144, 86, 172));
+        g.setFont(new Font(fontTitle, Font.BOLD, 40));
+        FontMetrics metrics2 = getFontMetrics(g.getFont());
+        g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics2.stringWidth("Score: " +
+                "" + applesEaten))/2, g.getFont().getSize());
 
     }
 
