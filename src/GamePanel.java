@@ -13,7 +13,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int GAME_UNITS = (SCREEN_WIDTH*SCREEN_HEIGHT)/UNIT_SIZE;
     // the higher the number, the slower the game is
     // TODO we can offer to choose the speed of this game later
-    static final int DELAY = 75;
+    static final int DELAY = 100;
 
     // arrays that hold all the coordinates of all the parts of snake's body
     final int x[] = new int[GAME_UNITS]; // all x coordinates
@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean randomSnakeColor = true;
 
     // our constructor
-    GamePanel() {
+    GamePanel() throws InterruptedException {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         // TODO later we can offer different options of the whole new game design with different
@@ -41,7 +41,9 @@ public class GamePanel extends JPanel implements ActionListener {
         startGame();
     }
 
-    public void startGame() {
+    public void startGame() throws InterruptedException {
+
+        Thread.sleep(600);
         newApple();
         running = true;
         timer = new Timer(DELAY, this);
@@ -186,7 +188,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void gameOver(Graphics g) throws InterruptedException {
-        // Game Over test
+        // Game Over text
         Thread.sleep(600);
         g.setColor(new Color(144, 86, 172));
         g.setFont(new Font(fontTitle, Font.PLAIN, 100));
